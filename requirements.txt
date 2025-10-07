@@ -1,0 +1,2 @@
+streamlit==1.50.0
+pycryptodome==3.23.0
