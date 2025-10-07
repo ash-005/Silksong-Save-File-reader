@@ -59,11 +59,11 @@ pycryptodome==3.23.0
    streamlit run app.py
    ```
 
+
 4. Open your browser (default: `http://localhost:8501`) and upload your Silksong save file:
 
-   ```
-   C:\Users\<username>\AppData\LocalLow\Team Cherry\Hollow Knight Silksong\default\user1.dat
-   ```
+   - **Windows:**  
+     `C:/Users/<username>/AppData/LocalLow/Team Cherry/Hollow Knight Silksong/default/user1.dat`
 
 5. View and export the decoded save as `silksong_save.json`.
 
@@ -82,12 +82,13 @@ silksong-save-decoder/
 ---
 
 ## Technical Details
-This app:
 
-1. Removes the Unity header
-2. Decodes Base64 chunks
-3. Decrypts the AES payload
-4. Parses the resulting UTF-8 JSON
+### How it works
+
+1. **Removes the Unity header**
+2. **Decodes Base64 chunks**
+3. **Decrypts the AES payload**
+4. **Parses the resulting UTF-8 JSON**
 
 ---
 
@@ -101,6 +102,15 @@ All rights for *Hollow Knight: Silksong* belong to **Team Cherry**.
 ## Credits
 
 * Original AES decoding logic inspired by [th3r3dfox/silksong-tracker](https://github.com/th3r3dfox/silksong-tracker)
+---
+
+
+---
+
+## Screenshots
+
+<img src="https://user-images.githubusercontent.com/your-screenshot.png" width="600" alt="UI Screenshot"/>
+
 ---
 
 Would you like me to include a section for the **reverse script (JSON → DAT re-encryptor)** too, so it’s ready when that part works cleanly?

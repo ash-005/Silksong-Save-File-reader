@@ -4,6 +4,7 @@ import json
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import unpad
 import io
+from PIL import Image
 
 # --- Constants from Silksong tracker ---
 CSHARP_HEADER = bytes([
@@ -70,28 +71,85 @@ def decode_silksong_save(data: bytes):
         raise ValueError(f"Failed to decode Silksong save: {e}")
 
 
-st.set_page_config(page_title="Silksong Save Decoder", page_icon="🕸️")
-st.title("Hollow Knight: Silksong Save Decoder")
 
-uploaded_file = st.file_uploader("Upload your Silksong save (.dat)", type=["dat"])
+# --- UI Improvements ---
+st.set_page_config(
+    page_title="Silksong Save Decoder",
+    page_icon="🕸️",
+    layout="centered",
+    initial_sidebar_state="expanded"
+)
+
+# Sidebar with instructions and credits
+with st.sidebar:
+    st.markdown("""
+    ## Silksong Save Decoder
+    
+    **How to use:**
+    1. Click **Browse files** below and select your `user1.dat` save file.
+    2. Wait for the file to decode (success message will appear).
+    3. View your save as JSON, and download it if you wish.
+    
+    **File location:**
+    - Windows:  
+      `C:/Users/&lt;username&gt;/AppData/LocalLow/Team Cherry/Hollow Knight Silksong/default/user1.dat`
+    
+    ---
+    [GitHub Repo](https://github.com/ash-005/Silksong-Save-File-reader)
+    """)
+    st.caption("""Made with ❤️ for the Silksong community.  
+    Not affiliated with Team Cherry.
+    """)
+
+# Main UI
+st.markdown("""
+<h1 style='text-align: center; color: #f3260fff; font-family: monospace;'>
+  🕸️ Hollow Knight: Silksong Save Decoder
+</h1>
+<p style='text-align: center; color: #aaa; font-size: 1.1em;'>
+  Decrypt and view your Silksong save file as readable JSON.<br>
+  <span style='color:#f3260fff;'>No data leaves your device.</span>
+</p>
+""", unsafe_allow_html=True)
+
+st.write("")
+
+st.markdown("""
+<div style='background-color: #1a1a1a; border-radius: 8px; padding: 1.2em 1em; margin-bottom: 1.5em;'>
+<b>Step 1:</b> <span style='color:#f3260fff;'>Upload your <code>user1.dat</code> save file</span> below.<br>
+<b>Step 2:</b> Wait for the decoder to process your file.<br>
+<b>Step 3:</b> View and download your save as JSON.
+</div>
+""", unsafe_allow_html=True)
+
+uploaded_file = st.file_uploader(
+    "",
+    type=["dat"],
+    label_visibility="collapsed",
+    help="Upload your Silksong save file (user1.dat)"
+)
 
 if uploaded_file:
-    try:
-        file_bytes = uploaded_file.read()
-        decoded_data = decode_silksong_save(file_bytes)
+    with st.spinner("Decoding your save file..."):
+        try:
+            file_bytes = uploaded_file.read()
+            decoded_data = decode_silksong_save(file_bytes)
+            
+            st.success("Successfully decoded your Silksong save!")
+            if isinstance(decoded_data, dict):
+                json_data = json.dumps(decoded_data, indent=2)
+                st.download_button(
+                    "⬇️ Download as JSON",
+                    data=json_data.encode("utf-8"),
+                    file_name="silksong_save.json",
+                    mime="application/json",
+                    help="Download your decoded save as a JSON file."
+                )
+            st.markdown("<b>Preview:</b>", unsafe_allow_html=True)
+            st.json(decoded_data)
 
-        st.success("Successfully decoded Silksong save!")
-        st.json(decoded_data)
-
-        if isinstance(decoded_data, dict):
-            json_data = json.dumps(decoded_data, indent=2)
-            st.download_button(
-                "Download JSON",
-                data=json_data.encode("utf-8"),
-                file_name="silksong_save.json",
-                mime="application/json"
-            )
-    except Exception as e:
-        st.error(str(e))
+            
+        except Exception as e:
+            st.error(f"❌ {str(e)}")
 else:
-    st.info("Upload a `.dat` file to decode it.")
+    st.info("<b>Waiting for file upload...</b> <br>Click above to select your <code>user1.dat</code> save file.", icon="📂")
